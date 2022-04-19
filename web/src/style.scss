@@ -1,0 +1,181 @@
+// 样式重置
+// reset
+* {
+  //防止内容将盒子撑大
+  box-sizing: border-box;
+  outline: none;
+}
+//根元素设置字体
+html {
+  font-size: 13px;
+}
+//清除body边距
+body {
+  margin: 0;
+
+  font-family: Arial, Helvetica, sans-serif;
+  //em 相对长度 根据当前文本中字体的大小进行设置
+  line-height: 1.2rem;
+  background-color: #f1f1f1;
+}
+a {
+  color: #999;
+}
+
+// 实现助手工具类 减少代码量 大量复用
+
+//网站颜色 colors
+$colors: (
+  // 主要颜色
+  "primary": #db9e3f,
+  "white": #fff,
+  "light": #f9f9f9,
+  "grey": #999,
+  "dark-1": #343440,
+  "dark": #222,
+  "black": #000
+);
+//
+@each $colorKey, $color in $colors {
+  .text-#{$colorKey} {
+    color: $color;
+  }
+  .bg-#{$colorKey} {
+    color: $color;
+  }
+}
+
+// 文本对齐方式 实现工具类开发
+@each $var in (left, center, right) {
+  .text-#{$var} {
+    text-align: $var;
+  }
+}
+// 字体的尺寸
+$base-font-size: 1rem;
+
+$font-sizes: (
+  xs: 0.769231,
+  // 10px
+  sm: 0.923077,
+  //12px
+  md: 1,
+  //13px
+  lg: 1.076923,
+  //14px
+  xl: 1.230769,
+  //16px
+);
+@each $sizeKey, $size in $font-sizes {
+  .fs-#{$sizeKey} {
+    //   倍数乘以当前设置的基本字体尺寸
+    font-size: $size * $base-font-size;
+  }
+}
+
+//felx布局
+// 设置为flex布局
+.d-felx {
+  display: flex;
+}
+//
+.flex-column {
+  flex-direction: column;
+}
+// 对齐方式
+$flex-jc: (
+  start: flex-start,
+  end: flex-end,
+  center: center,
+  between: space-between,
+  around: space-around,
+);
+
+@each $key, $value in $flex-jc {
+  .jc-#{$key} {
+    justify-content: $value;
+  }
+}
+// 交叉轴对齐方式
+$flex-ai: (
+  start: flex-start,
+  end: flex-end,
+  center: center,
+  stretch: stretch,
+);
+@each $key, $value in $flex-ai {
+  .ai-#{$key} {
+    align-items: $value;
+  }
+}
+
+// 拓展整个空余空间
+.flex-1 {
+  flex: 1;
+}
+//  等同于上一个类，意味着填充整个剩余空间
+.flex-grow-1 {
+  flex-grow: 1;
+}
+
+// 常用边距margin、padding定义
+
+// spacing
+// 0-5 : 0
+// .mt-1 margin top level1; .pb-2 padding bottom level2
+
+//边距的类型
+$space-type: (
+  m: margin,
+  p: padding,
+);
+// 边距的方向
+$space-direction: (
+  t: top,
+  r: right,
+  b: bottom,
+  l: left,
+);
+// 定义单位尺寸
+$space-base-size: 1rem;
+// 边距大小级别 实现 .mt-1 margin top level1;
+$space-size: (
+  0: 0,
+  1: 0.25,
+  2: 0.5,
+  3: 1,
+  4: 1.5,
+  5: 2,
+);
+// 根据上面的结构，三级嵌套循环, 实现md-1=>margin-top：0.25rem,以此类推
+@each $typeKey, $type in $space-type {
+  // 1 .m-1 不带方位的形式
+  @each $sizeKey, $size in $space-size {
+    .#{$typeKey}-#{$sizeKey} {
+      #{$type}: $size * $space-base-size;
+    }
+  }
+  @each $directionKey, $direction in $space-direction {
+    // 2 .md-1 带方位的形式
+    @each $sizeKey, $size in $space-size {
+      .#{$typeKey}#{$directionKey}-#{$sizeKey} {
+        #{$type}-#{$direction}: $size * $space-base-size;
+      }
+    }
+  }
+  // 3 .mx-1 水平左右保持一致
+  @each $sizeKey, $size in $space-size {
+    // .mx-1 {margin:0.25rem}
+    .#{$typeKey}x-#{$sizeKey} {
+      #{$type}-left: $size * $space-base-size;
+      #{$type}-right: $size * $space-base-size;
+    }
+  }
+  // 4 .my-1 {margin:0.25rem}  垂直上下保持一致
+  @each $sizeKey, $size in $space-size {
+    .#{$typeKey}y-#{$sizeKey} {
+      #{$type}-top: $size * $space-base-size;
+      #{$type}-bottom: $size * $space-base-size;
+    }
+  }
+}
