@@ -20,7 +20,11 @@
       </el-form-item>
       <!--详情处理  -->
       <el-form-item label="详情">
-        <el-input v-model="model.body"></el-input>
+        <vue-editor
+          v-model="model.body"
+          useCustomImageHandler
+          @image-added="handleImageAdded"
+        ></vue-editor>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" native-type="submit">保存</el-button>
@@ -31,7 +35,12 @@
 </template>
 
 <script>
+import { VueEditor } from "vue2-editor";
+
 export default {
+  components: {
+    VueEditor,
+  },
   data() {
     return {
       model: {},
@@ -42,6 +51,23 @@ export default {
   //声明props接受路由带来的id
   props: { id: {} },
   methods: {
+    // 富文本中自定义上传器
+    async handleImageAdded(file, Editor, cursorLocation, resetUploader) {
+      //使用表单提交文件
+      const formData = new FormData();
+      //append添加字段
+      formData.append("file", file);
+      //上传
+      const res = await this.$http.post(
+         "upload",
+        formData,
+      );
+      // 嵌入元素
+      Editor.insertEmbed(cursorLocation, "image", res.data.url);
+      //充值上传器
+      resetUploader();
+    },
+
     // 保存数据
     async save() {
       //保存的时候需要进行条件判断 新建和编辑的请求方法不一样 post与put 路径也不一样、
@@ -70,6 +96,7 @@ export default {
       const res = await this.$http.get(`rest/categories`); // eslint-disable-line no-unused-vars
       this.categories = res.data;
     },
+    //富文本编辑器中的图片上传
   },
   created() {
     //creted生命周期根据id是否存在获取数据并将数据填充的input框里 便于修改
